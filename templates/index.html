@@ -13,7 +13,13 @@
         <form action="/lyrics" method="get">
             <label for="query">Search for...</label>
             <br />
-            <input type="text" id="query" name="q" placeholder="The weeknd how do i make you love me" required>
+            <input
+                type="text"
+                id="query"
+                name="q"
+                placeholder="The weeknd how do i make you love me"
+                required
+            />
             <button type="submit">Search</button>
         </form>
 
@@ -23,7 +29,10 @@
             <li>API endpoint: <code>/lyrics</code></li>
             <ul>
                 <li>Acceptable parameters: <code>q</code></li>
-                <li>Example: <code>/lyrics?q=how+do+i+make+you+love+me+the+weeknd</code></li>
+                <li>
+                    Example:
+                    <code>/lyrics?q=how+do+i+make+you+love+me+the+weeknd</code>
+                </li>
             </ul>
         </ul>
 
@@ -31,35 +40,62 @@
         <ul>
             <li>200</li>
             <ul>
-                <li><code>{"artists": "", "lyrics": "", "source": "", "status": "200", "title": ""}</code></li>
+                <li>
+                    <code
+                        >{"artists": "", "lyrics": "", "source": "", "status":
+                        "200", "title": ""}</code
+                    >
+                </li>
             </ul>
 
             <li>400</li>
             <ul>
-                <li><code>{"exception": "NoParameter", "message": "Missing parameter 'q'.", "status": "400"}</code></li>
+                <li>
+                    <code
+                        >{"exception": "NoParameter", "message": "Missing
+                        parameter 'q'.", "status": "400"}</code
+                    >
+                </li>
             </ul>
 
             <li>404</li>
             <ul>
-                <li><code>{"exception": "NoResults", "message": "'' did not give any results, Please try a different term.", "status": "404"}</code></li>
+                <li>
+                    <code
+                        >{"exception": "NoResults", "message": "'' did not give
+                        any results, Please try a different term.", "status":
+                        "404"}</code
+                    >
+                </li>
             </ul>
 
             <li>500</li>
             <ul>
-                <li><code>{"exception": "ScrapeError", "message": "", "status": "500"}</code></li>
+                <li>
+                    <code
+                        >{"exception": "ScrapeError", "message": "", "status":
+                        "500"}</code
+                    >
+                </li>
             </ul>
 
             <li>502</li>
             <ul>
-                <li><code>{"exception": "RequestConnectionError", "message": "", "status": "502"}</code></li>
+                <li>
+                    <code
+                        >{"exception": "RequestConnectionError", "message": "",
+                        "status": "502"}</code
+                    >
+                </li>
             </ul>
-
         </ul>
 
         <h2>Exceptions/Errors</h2>
 
         <ul>
-            <li><code>NoParameter</code>: Occurs when no parameter was given.</li>
+            <li>
+                <code>NoParameter</code>: Occurs when no parameter was given.
+            </li>
             <ul>
                 <li>Returns status code 400.</li>
             </ul>
@@ -69,13 +105,19 @@
                 <li>Returns status code 404.</li>
             </ul>
 
-            <li><code>ScrapeError</code>: Occurs when pylyrical cannot scrape lyrics from genius.com</li>
+            <li>
+                <code>ScrapeError</code>: Occurs when pylyrical cannot scrape
+                lyrics from genius.com
+            </li>
             <ul>
                 <li>Returns status code 500.</li>
             </ul>
 
-            <li><code>RequestConnectionError</code>: Occurs when pylyrical cannot send a request to genius.com</li>
-             <ul>
+            <li>
+                <code>RequestConnectionError</code>: Occurs when pylyrical
+                cannot send a request to genius.com
+            </li>
+            <ul>
                 <li>Returns status code 502.</li>
             </ul>
         </ul>
