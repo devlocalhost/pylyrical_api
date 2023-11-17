@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>pylyrical_api - lyrics API scraping from genius.com</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <h1 class="colored">pylyrical_api</h1>
+
+        <h2>Try it out</h2>
+        <form action="/lyrics" method="get">
+            <label for="query">Search for...</label>
+            <br />
+            <input type="text" id="query" name="q" placeholder="The weeknd how do i make you love me" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <h2>Usage</h2>
+
+        <ul>
+            <li>API endpoint: <code>/lyrics</code></li>
+            <ul>
+                <li>Acceptable parameters: <code>q</code></li>
+            </ul>
+        </ul>
+
+        <h2>Exceptions/Errors</h2>
+
+        <ul>
+            <li><code>ScrapeError</code>: Occurs when pylyrical cannot scrape lyrics from genius.com</li>
+            <ul>
+                <li>Returns status code 500.</li>
+            </ul>
+
+            <li><code>SearchError</code>: Occurs when pylyrical cannot send a request to genius.com</li>
+             <ul>
+                <li>Returns status code 502.</li>
+            </ul>
+        </ul>
+
+        <h2>Status codes</h2>
+        <ul>
+            <li>200: Occurs on a successful request.</li>
+            <li>400: Occurs when parameter <code>q</code> was not given.</li>
+            <li>404: Occurs searching for parameter <code>q</code> returned no results.</li>
+        </ul>
+    </body>
+</html>
