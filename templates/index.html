@@ -23,28 +23,61 @@
             <li>API endpoint: <code>/lyrics</code></li>
             <ul>
                 <li>Acceptable parameters: <code>q</code></li>
+                <li>Example: <code>/lyrics?q=how+do+i+make+you+love+me+the+weeknd</code></li>
             </ul>
+        </ul>
+
+        <h2>Responses</h2>
+        <ul>
+            <li>200</li>
+            <ul>
+                <li><code>{"artists": "", "lyrics": "", "source": "", "status": "200", "title": ""}</code></li>
+            </ul>
+
+            <li>400</li>
+            <ul>
+                <li><code>{"exception": "NoParameter", "message": "Missing parameter 'q'.", "status": "400"}</code></li>
+            </ul>
+
+            <li>404</li>
+            <ul>
+                <li><code>{"exception": "NoResults", "message": "'' did not give any results, Please try a different term.", "status": "404"}</code></li>
+            </ul>
+
+            <li>500</li>
+            <ul>
+                <li><code>{"exception": "ScrapeError", "message": "", "status": "500"}</code></li>
+            </ul>
+
+            <li>502</li>
+            <ul>
+                <li><code>{"exception": "RequestConnectionError", "message": "", "status": "502"}</code></li>
+            </ul>
+
         </ul>
 
         <h2>Exceptions/Errors</h2>
 
         <ul>
+            <li><code>NoParameter</code>: Occurs when no parameter was given.</li>
+            <ul>
+                <li>Returns status code 400.</li>
+            </ul>
+
+            <li><code>NoResults</code>: Occurs when no results were found.</li>
+            <ul>
+                <li>Returns status code 404.</li>
+            </ul>
+
             <li><code>ScrapeError</code>: Occurs when pylyrical cannot scrape lyrics from genius.com</li>
             <ul>
                 <li>Returns status code 500.</li>
             </ul>
 
-            <li><code>SearchError</code>: Occurs when pylyrical cannot send a request to genius.com</li>
+            <li><code>RequestConnectionError</code>: Occurs when pylyrical cannot send a request to genius.com</li>
              <ul>
                 <li>Returns status code 502.</li>
             </ul>
-        </ul>
-
-        <h2>Status codes</h2>
-        <ul>
-            <li>200: Occurs on a successful request.</li>
-            <li>400: Occurs when parameter <code>q</code> was not given.</li>
-            <li>404: Occurs searching for parameter <code>q</code> returned no results.</li>
         </ul>
     </body>
 </html>

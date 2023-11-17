@@ -12,10 +12,8 @@ app = Flask(__name__)
 class ScrapeError(Exception):
     pass
 
-
-class SearchError(Exception):
+class RequestConnectionError(Exception):
     pass
-
 
 class NoResults(Exception):
     pass
@@ -39,10 +37,14 @@ class GeniusAPI:
                 data = lyrics_data.get_text("\n")
                 song_lyrics.append(f"{data}\n")
 
-            return str("".join(song_lyrics))
+            if len(song_lyrics) != 0:
+                return str("".join(song_lyrics))
+
+            else:
+                raise ScrapeError(f"Could not scrape lyrics. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```")
 
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-            raise ScrapeError(f"Could not connect to {self.api_url}. Is it down?")
+            raise RequestConnectionError(f"Could not connect to {self.api_url}. Is it down?")
 
     def search(self, query_term):
         data = {"q": query_term}
@@ -52,7 +54,7 @@ class GeniusAPI:
             result = requests.get(self.api_url, params=data, headers=headers).json()
 
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-            raise SearchError(f"Could not connect to {self.api_url}. Is it down?")
+            raise RequestConnectionError(f"Could not connect to {self.api_url}. Is it down?")
 
         if len(result["response"]["hits"]) != 0:
             artists = result["response"]["hits"][0]["result"]["artist_names"]
@@ -86,17 +88,17 @@ def get_lyrics():
         try:
             data = genius_api.search(str(query))
 
-        except SearchError as search_exc:
-            return jsonify({"status": "502", "message": str(search_exc)}), 502
+        except RequestConnectionError as request_exc:
+            return jsonify({"status": "502", "message": str(request_exc), "exception": request_exc.__class__.__name__}), 502
 
         except NoResults as results_exc:
-            return jsonify({"status": "404", "message": str(results_exc)}), 502
+            return jsonify({"status": "404", "message": str(results_exc), "exception": results_exc.__class__.__name__}), 404
 
         try:
             lyrics = genius_api.scrape_lyrics(data[2])
 
         except ScrapeError as scrape_exc:
-            return jsonify({"status": "500", "message": str(scrape_exc)}), 500
+            return jsonify({"status": "500", "message": str(scrape_exc), "exception": scrape_exc.__class__.__name__}), 500
 
         return (
             jsonify(
