@@ -40,7 +40,7 @@ class GeniusAPI:
                 song_lyrics.append(f"{data}\n")
 
             if len(song_lyrics) != 0:
-                return str("".join(song_lyrics))
+                return str("".join(song_lyrics)).replace("\n[", "\n\n[")
 
             else:
                 raise ScrapeError(
@@ -153,4 +153,4 @@ def get_lyrics():
 
 
 if __name__ == "__main__":
-    app.run()  # host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=True)
