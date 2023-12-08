@@ -4,10 +4,13 @@
         <title>pylyrical_api - lyrics API scraping from genius.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="/static/style.css" />
+        <link rel="stylesheet" href="/static/style.css" id="default-stylesheet" />
+        <link rel="stylesheet" href="/static/border-outline.css" id="debug-stylesheet" disabled />
     </head>
     <body>
-        <h1 class="colored">pylyrical_api</h1>
+        <div class="top-bar" id="scrollBar"></div>
+
+        <h1 class="colored" onclick="toggleStylesheet()">pylyrical_api</h1>
 
         <h2>Try it out</h2>
         <form action="/lyrics" method="get">
@@ -26,7 +29,7 @@
         <h2>Usage</h2>
 
         <ul>
-            <li>API endpoint: <code>/lyrics</code></li>
+            <li>Endpoint: <code>/lyrics</code></li>
             <ul>
                 <li>Acceptable parameters: <code>q</code></li>
                 <li>
@@ -37,7 +40,9 @@
         </ul>
 
         <h2>Responses</h2>
-        <ul>
+        <p>Responses are always in JSON. The following status codes are HTTP status codes.</p>
+
+        <ol>
             <li>200</li>
             <ul>
                 <li>
@@ -72,11 +77,11 @@
                     <code>{"exception": "RequestConnectionError", "message": "", "status": "502"}</code>
                 </li>
             </ul>
-        </ul>
+        </ol>
 
         <h2>Exceptions/Errors</h2>
 
-        <ul>
+        <ol>
             <li>
                 <code>NoParameter</code>: Occurs when no parameter was given.
             </li>
@@ -104,6 +109,8 @@
             <ul>
                 <li>Returns status code 502.</li>
             </ul>
-        </ul>
+        </ol>
+
+        <script src="/static/script.js"></script>
     </body>
 </html>

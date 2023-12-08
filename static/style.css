@@ -2,26 +2,62 @@
     --accent-color: #ffff64;
     --background-color: rgb(26, 28, 30);
     --text-color: #cacaca;
-    --animation-speed: 0.25s;
+    --ul-ol-background-color: #303030;
+    --box-border-color: #111;
+    --box-border-size: 10px;
 }
 
 code {
-    background-color: #151515;
-    font: 1.2em/1.62 monospace;
+    background-color: #000; /* #151515; */
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    white-space: normal;
+    max-width: 100%;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.top-bar {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-color);
+    height: 3px;
+    transition: width 0.1s; /* width: 100vw; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    margin: 0;
+}
+
+code:hover {
+    box-shadow: 0 0 14px var(--accent-color);
 }
 
 ul, ol {
-    background: #303030;
+    background: var(--ul-ol-background-color);
     padding-top: 11px;
     padding-bottom: 11px;
     padding-right: 11px;
     border-radius: 15px;
+    box-shadow: 0 0 var(--box-border-size) var(--box-border-color);
 }
+
+ul {
+    list-style-type: disc; /* the default, "circle" is uglier than me. */
+}
+
+ol ol, ol ul, ul ul {
+    background: rgb(32, 34, 36);
+    box-shadow: 0 0 4px var(--box-border-color);
+}
+
 
 input {
     width: 70%;
 }
-
 body {
     color: var(--text-color); /* rgba(255, 255, 245, .86); */
     background-color: var(--background-color);
@@ -35,8 +71,7 @@ body {
     color: var(--accent-color);
 }
 
-h1,
-h2 {
+h1, h2 {
     line-height: 1.2;
 }
 
