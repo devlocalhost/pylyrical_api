@@ -26,6 +26,28 @@ class GeniusAPI:
         self.api_url = api_url
         self.token = token
 
+    def scrape_cover(self, link):
+        try:
+            req = requests.get(link, timeout=5)
+            req.raise_for_status()
+
+            cover_image = (
+                BeautifulSoup(req.text, "html.parser")
+                .select("img[class*=SizedImage]")[1]
+                .get("src")
+            )  # 200 iq
+
+            if cover_image != 0:
+                return cover_image
+
+            else:
+                return None
+
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            raise RequestConnectionError(
+                f"Could not connect to {self.api_url}. Is it down?"
+            )
+
     def scrape_lyrics(self, link):
         song_lyrics = []
 
@@ -135,6 +157,8 @@ def get_lyrics():
                 500,
             )
 
+        cover_image = genius_api.scrape_cover(data[2])
+
         return (
             jsonify(
                 {
@@ -143,6 +167,7 @@ def get_lyrics():
                     "title": data[1],
                     "source": data[2],
                     "lyrics": lyrics,
+                    "cover_image": cover_image,
                 }
             ),
             200,
