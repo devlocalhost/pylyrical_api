@@ -35,15 +35,6 @@ class GeniusAPI:
 
             soup = BeautifulSoup(req.text, "html.parser")
 
-            """
-            for h in soup.find_all("img"):
-                try:
-                    print(h.get("src") if "1000x1000x1" in h.get("src") else "No")
-
-                except:
-                    pass
-            """
-
             for img in soup.find_all("img"):
                 try:
                     if "1000x1000x1" in img.get("src"):
