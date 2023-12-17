@@ -89,7 +89,7 @@ class GeniusAPI:
         headers = {"Authorization": f"Bearer {self.token}"}
 
         try:
-            result = requests.get(self.api_url, params=data, headers=headers).json()
+            result = requests.get(self.api_url, params=data, headers=headers, timeout=5).json()
 
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
             raise RequestConnectionError(
