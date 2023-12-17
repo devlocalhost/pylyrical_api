@@ -49,10 +49,13 @@ class GeniusAPI:
                     if "1000x1000x1" in img.get("src"):
                         image = img.get("src")
 
-                except: # TypeError
+                except:  # TypeError
                     pass
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+        ) as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
             ) from exc
@@ -79,7 +82,10 @@ class GeniusAPI:
                 f"Could not scrape lyrics. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
             )
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+        ) as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
             ) from exc
@@ -89,9 +95,14 @@ class GeniusAPI:
         headers = {"Authorization": f"Bearer {self.token}"}
 
         try:
-            result = requests.get(self.api_url, params=data, headers=headers, timeout=5).json()
+            result = requests.get(
+                self.api_url, params=data, headers=headers, timeout=5
+            ).json()
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+        ) as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
             ) from exc
