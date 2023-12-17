@@ -75,10 +75,9 @@ class GeniusAPI:
             if len(song_lyrics) != 0:
                 return str("".join(song_lyrics)).replace("\n[", "\n\n[")
 
-            else:
-                raise ScrapeError(
-                    f"Could not scrape lyrics. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
-                )
+            raise ScrapeError(
+                f"Could not scrape lyrics. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
+            )
 
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
             raise RequestConnectionError(
@@ -104,10 +103,9 @@ class GeniusAPI:
 
             return (artists, title, genius_url)
 
-        else:
-            raise NoResults(
-                f"'{query_term}' did not give any results, Please try a different term."
-            )
+        raise NoResults(
+            f"'{query_term}' did not give any results, Please try a different term."
+        )
 
 
 genius_api = GeniusAPI(
@@ -194,8 +192,7 @@ def get_lyrics():
             200,
         )
 
-    else:
-        return jsonify({"status": "400", "message": "Missing parameter 'q'."}), 400
+    return jsonify({"status": "400", "message": "Missing parameter 'q'."}), 400
 
 
 if __name__ == "__main__":
