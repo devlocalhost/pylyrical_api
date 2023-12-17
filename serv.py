@@ -10,18 +10,36 @@ app = Flask(__name__)
 
 
 class ScrapeError(Exception):
+    """
+    custom exception to raise when scrapping
+    """
+
     pass
 
 
 class RequestConnectionError(Exception):
+    """
+    custom exception to raise when api cannot
+    send a request/contact genius.com
+    """
+
     pass
 
 
 class NoResults(Exception):
+    """
+    custom exception to raise when no results
+    for q (query)
+    """
+
     pass
 
 
 class GeniusAPI:
+    """
+    making things a bit easier
+    """
+
     def __init__(self, api_url, token):
         self.api_url = api_url
         self.token = token
