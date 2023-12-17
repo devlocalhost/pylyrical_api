@@ -31,14 +31,18 @@ class GeniusAPI:
             req = requests.get(link, timeout=5)
             req.raise_for_status()
 
-            cover_image = (
-                BeautifulSoup(req.text, "html.parser")
-                .select("img[class*=SizedImage]")[1]
-                .get("src")
-            )  # 200 iq
+            try:
+                cover_image = (
+                    BeautifulSoup(req.text, "html.parser")
+                    .select("img[class*=SizedImage]")[1]
+                    .get("src")
+                )  # 200 iq
 
-            if cover_image != 0:
-                return cover_image
+                if cover_image != 0:
+                    return cover_image
+
+            except IndexError:
+                return None # wow +200 iq
 
             else:
                 return None
