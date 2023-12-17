@@ -27,30 +27,37 @@ class GeniusAPI:
         self.token = token
 
     def scrape_cover(self, link):
+        image = None
+
         try:
             req = requests.get(link, timeout=5)
             req.raise_for_status()
 
-            try:
-                cover_image = (
-                    BeautifulSoup(req.text, "html.parser")
-                    .select("img[class*=SizedImage]")[1]
-                    .get("src")
-                )  # 200 iq
+            soup = BeautifulSoup(req.text, "html.parser")
 
-                if cover_image != 0:
-                    return cover_image
+            """
+            for h in soup.find_all("img"):
+                try:
+                    print(h.get("src") if "1000x1000x1" in h.get("src") else "No")
 
-            except IndexError:
-                return None # wow +200 iq
+                except:
+                    pass
+            """
 
-            else:
-                return None
+            for img in soup.find_all("img"):
+                try:
+                    if "1000x1000x1" in img.get("src"):
+                        image = img.get("src")
+
+                except: # TypeError
+                    pass
 
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
             )
+
+        return image
 
     def scrape_lyrics(self, link):
         song_lyrics = []
@@ -114,7 +121,7 @@ def add_cors_headers(response):
     # response.headers['Content-Type'] = 'application/json'
     # fuck this shit breaks the main page lol
 
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers["Access-Control-Allow-Origin"] = "*"
 
     return response
 
