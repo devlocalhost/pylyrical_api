@@ -52,10 +52,10 @@ class GeniusAPI:
                 except: # TypeError
                     pass
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
-            )
+            ) from exc
 
         return image
 
@@ -79,10 +79,10 @@ class GeniusAPI:
                 f"Could not scrape lyrics. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
             )
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
-            )
+            ) from exc
 
     def search(self, query_term):
         data = {"q": query_term}
@@ -91,10 +91,10 @@ class GeniusAPI:
         try:
             result = requests.get(self.api_url, params=data, headers=headers, timeout=5).json()
 
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
-            )
+            ) from exc
 
         if len(result["response"]["hits"]) != 0:
             artists = result["response"]["hits"][0]["result"]["artist_names"]
