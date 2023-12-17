@@ -109,6 +109,16 @@ genius_api = GeniusAPI(
 )
 
 
+@app.after_request
+def add_cors_headers(response):
+    # response.headers['Content-Type'] = 'application/json'
+    # fuck this shit breaks the main page lol
+
+    response.headers['Access-Control-Allow-Origin'] = '*'
+
+    return response
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
