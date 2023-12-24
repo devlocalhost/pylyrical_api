@@ -54,6 +54,14 @@ ol ol, ol ul, ul ul {
     box-shadow: 0 0 4px var(--box-border-color);
 }
 
+img {
+    display: block;
+    margin: 0 auto;
+    width: 97%;
+    border: 5px solid var(--accent-color);
+    border-radius: 15px;
+    box-shadow: 0 0 var(--box-border-size) var(--accent-color);
+}
 
 input {
     width: 70%;
