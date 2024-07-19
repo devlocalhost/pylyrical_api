@@ -1,6 +1,9 @@
 # pylyrical_api
 pylyrical_api - lyrics API scraping from genius.com
 
+# API Token
+To self-host, you need to get an API token from the [api client page](https://genius.com/api-clients). You can then add the API token to a ".env" file. Example: `GENIUS_API_TOKEN="T0K3N"`
+
 # Usage
 - API endpoint: /lyrics
 - Acceptable parameters: q
