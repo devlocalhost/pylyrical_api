@@ -51,7 +51,7 @@
             <li>200</li>
             <ul>
                 <li>
-                    <code>{"artists": "", "lyrics": "", "source": "", "status": "200", "title": "", "cover_image": ""}</code>
+                    <code>{"artists": "", "lyrics": "", "source": "", "status": 200, "title": "", "cover_image": ""}</code>
                     Note: <code>cover_image</code> is <code>null</code> if backend could not scrape the cover image.
                 </li>
             </ul>
@@ -59,28 +59,28 @@
             <li>400</li>
             <ul>
                 <li>
-                    <code>{"exception": "NoParameter", "message": "Missing parameter 'q'.", "status": "400"}</code>
+                    <code>{"exception": "NoParameter", "message": "Missing parameter 'q'.", "status": 400}</code>
                 </li>
             </ul>
 
             <li>404</li>
             <ul>
                 <li>
-                    <code>{"exception": "NoResults", "message": "'' did not give any results, Please try a different term.", "status": "404"}</code>
+                    <code>{"exception": "NoResults", "message": "'' did not give any results, Please try a different term.", "status": 404}</code>
                 </li>
             </ul>
 
             <li>500</li>
             <ul>
                 <li>
-                    <code>{"exception": "ScrapeError", "message": "", "status": "500"}</code>
+                    <code>{"exception": "ScrapeError", "message": "", "status": 500}</code>
                 </li>
             </ul>
 
             <li>502</li>
             <ul>
                 <li>
-                    <code>{"exception": "RequestConnectionError", "message": "", "status": "502"}</code>
+                    <code>{"exception": "RequestConnectionError", "message": "", "status": 502}</code>
                 </li>
             </ul>
         </ol>

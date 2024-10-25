@@ -161,7 +161,7 @@ def get_lyrics():
             return (
                 jsonify(
                     {
-                        "status": "502",
+                        "status": 502,
                         "message": str(request_exc),
                         "exception": request_exc.__class__.__name__,
                     }
@@ -173,7 +173,7 @@ def get_lyrics():
             return (
                 jsonify(
                     {
-                        "status": "404",
+                        "status": 404,
                         "message": str(results_exc),
                         "exception": results_exc.__class__.__name__,
                     }
@@ -188,7 +188,7 @@ def get_lyrics():
             return (
                 jsonify(
                     {
-                        "status": "500",
+                        "status": 500,
                         "message": str(scrape_exc),
                         "exception": scrape_exc.__class__.__name__,
                     }
@@ -201,7 +201,7 @@ def get_lyrics():
         return (
             jsonify(
                 {
-                    "status": "200",
+                    "status": 200,
                     "artists": data[0],
                     "title": data[1],
                     "source": data[2],
@@ -212,7 +212,7 @@ def get_lyrics():
             200,
         )
 
-    return jsonify({"status": "400", "message": "Missing parameter 'q'."}), 400
+    return jsonify({"status": 400, "message": "Missing parameter 'q'."}), 400
 
 
 if __name__ == "__main__":
