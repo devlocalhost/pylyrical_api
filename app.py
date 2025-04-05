@@ -1,12 +1,22 @@
 import os
+import hmac
+import hashlib
 import requests
+import subprocess
 
-from flask import Flask, jsonify, request, render_template
 from bs4 import BeautifulSoup
+from flask import Flask, jsonify, request, render_template
 from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
+
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
+
+APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")  
 
 
 class ScrapeError(Exception):
@@ -134,6 +144,20 @@ genius_api = GeniusAPI(
 )
 
 
+def verify_signature(secret_token, signature_header, payload_body):
+    if not signature_header:
+        return False
+        
+    hash_object = hmac.new(secret_token.encode('utf-8'), msg=payload_body, digestmod=hashlib.sha256)
+    expected_signature = "sha256=" + hash_object.hexdigest()
+    
+    if hmac.compare_digest(expected_signature, signature_header):
+        return True
+
+    else:
+        return False
+
+
 @app.after_request
 def add_cors_headers(response):
     # response.headers['Content-Type'] = 'application/json'
@@ -142,6 +166,20 @@ def add_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
 
     return response
+
+
+@app.route("/autod", methods=["POST"])
+def autod():
+    signature = request.headers.get("X-Hub-Signature-256")
+    payload = request.get_data()
+
+    if verify_signature(APP_SECRET_TOKEN, signature, payload):
+        subprocess.Popen([os.path.abspath("auto-deploy.sh")])
+
+        return "", 200
+
+    else:
+        return "", 403
 
 
 @app.route("/")
