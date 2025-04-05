@@ -85,7 +85,6 @@ class GeniusAPI:
 
         try:
             req = requests.get(link, timeout=5)
-            req.raise_for_status()
 
             for lyrics_data in BeautifulSoup(req.text, "html.parser").select(
                 "div[class*=Lyrics__Container]"
