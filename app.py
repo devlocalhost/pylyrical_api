@@ -19,6 +19,7 @@ app.wsgi_app = ProxyFix(
 )
 
 APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
 
 
 class ScrapeError(Exception):
@@ -149,7 +150,7 @@ class GeniusAPI:
 genius_api = GeniusAPI(
     api_url="https://api.genius.com/search/",
     token=os.environ["GENIUS_API_TOKEN"],
-    user_agent=user_agent,
+    user_agent=USER_AGENT,
 )
 
 
