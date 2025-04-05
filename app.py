@@ -4,6 +4,8 @@ import hashlib
 import requests
 import subprocess
 
+import cloudscraper
+
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request, render_template
 from dotenv import load_dotenv
@@ -50,15 +52,23 @@ class GeniusAPI:
     making things a bit easier
     """
 
-    def __init__(self, api_url, token):
+    def __init__(self, api_url, token, user_agent):
         self.api_url = api_url
         self.token = token
+
+        self.scraper = cloudscraper.create_scraper()
+        self.user_agent = (
+            user_agent
+            if user_agent
+            else "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
+        )
+        self.headers = {"User-Agent": self.user_agent}
 
     def scrape_cover(self, link):
         image = None
 
         try:
-            req = requests.get(link, timeout=5)
+            req = self.scraper.get(link, timeout=5)
 
             soup = BeautifulSoup(req.text, "html.parser")
 
@@ -84,7 +94,7 @@ class GeniusAPI:
         song_lyrics = []
 
         try:
-            req = requests.get(link, timeout=5)
+            req = self.scraper.get(link, timeout=5)
 
             for lyrics_data in BeautifulSoup(req.text, "html.parser").select(
                 "div[class*=Lyrics__Container]"
@@ -139,6 +149,7 @@ class GeniusAPI:
 genius_api = GeniusAPI(
     api_url="https://api.genius.com/search/",
     token=os.environ["GENIUS_API_TOKEN"],
+    user_agent=user_agent,
 )
 
 
