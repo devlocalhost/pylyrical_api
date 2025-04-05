@@ -16,7 +16,7 @@ app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
 
-APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")  
+APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
 
 
 class ScrapeError(Exception):
@@ -59,7 +59,6 @@ class GeniusAPI:
 
         try:
             req = requests.get(link, timeout=5)
-            req.raise_for_status()
 
             soup = BeautifulSoup(req.text, "html.parser")
 
@@ -147,10 +146,10 @@ genius_api = GeniusAPI(
 def verify_signature(secret_token, signature_header, payload_body):
     if not signature_header:
         return False
-        
+
     hash_object = hmac.new(secret_token.encode('utf-8'), msg=payload_body, digestmod=hashlib.sha256)
     expected_signature = "sha256=" + hash_object.hexdigest()
-    
+
     if hmac.compare_digest(expected_signature, signature_header):
         return True
 
