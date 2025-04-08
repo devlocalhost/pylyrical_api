@@ -4,7 +4,7 @@ import hashlib
 import requests
 import subprocess
 
-import cloudscraper
+import httpx
 
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request, render_template
@@ -18,8 +18,10 @@ app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
 
+client = httpx.Client(http2=True)
+
 APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
-USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
+USER_AGENT = "Mozilla/5.0 (Linux; Android 15; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.7049.38 Mobile Safari/537.36"
 
 
 class ScrapeError(Exception):
@@ -57,19 +59,14 @@ class GeniusAPI:
         self.api_url = api_url
         self.token = token
 
-        self.scraper = cloudscraper.create_scraper()
-        self.user_agent = (
-            user_agent
-            if user_agent
-            else "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
-        )
-        self.headers = {"User-Agent": self.user_agent}
+        self.headers = {"User-Agent": user_agent}
+        self.client = httpx.Client(http2=True)
 
     def scrape_cover(self, link):
         image = None
 
         try:
-            req = self.scraper.get(link, timeout=5)
+            req = self.client.get(link, timeout=5, headers=self.headers)
 
             soup = BeautifulSoup(req.text, "html.parser")
 
@@ -95,7 +92,7 @@ class GeniusAPI:
         song_lyrics = []
 
         try:
-            req = self.scraper.get(link, timeout=5)
+            req = self.client.get(link, timeout=5, headers=self.headers)
 
             for lyrics_data in BeautifulSoup(req.text, "html.parser").select(
                 "div[class*=Lyrics__Container]"

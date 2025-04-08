@@ -1,5 +1,6 @@
 flask
 requests
 bs4
+httpx[http2]
 python-dotenv
 gunicorn
