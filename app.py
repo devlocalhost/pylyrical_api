@@ -21,12 +21,21 @@ app.wsgi_app = ProxyFix(
 client = httpx.Client(http2=True)
 
 APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
+API_SCRAPER_URL = os.environ.get("API_SCRAPER_URL")
 USER_AGENT = "Mozilla/5.0 (Linux; Android 15; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.7049.38 Mobile Safari/537.36"
 
 
 class ScrapeError(Exception):
     """
     custom exception to raise when scrapping
+    """
+
+    pass
+
+
+class TimeoutError(Exception):
+    """
+    error to raise when timeout
     """
 
     pass
@@ -55,65 +64,52 @@ class GeniusAPI:
     making things a bit easier
     """
 
-    def __init__(self, api_url, token, user_agent):
+    def __init__(self, api_url, token):
         self.api_url = api_url
         self.token = token
+        
 
-        self.headers = {"User-Agent": user_agent}
-        self.client = httpx.Client(http2=True)
-
-    def scrape_cover(self, link):
+    def scrape(self, link):
+        lyrics = []
         image = None
 
         try:
-            req = self.client.get(link, timeout=5, headers=self.headers)
+            req = requests.get(f"{API_SCRAPER_URL}?url={link}", timeout=15)            
+            req_data = req.json()
 
-            soup = BeautifulSoup(req.text, "html.parser")
+            soup = BeautifulSoup(req_data["html"], "html.parser")
+            
+            for lyricheader in soup.select("div[class*=LyricsHeader__Container]"):
+                lyricheader.decompose()
+            
+            for lyrics_data in soup.select("div[class*=Lyrics__Container]"):
+                data = lyrics_data.get_text("\n")
+                lyrics.append(f"{data}\n")
+
+            if len(lyrics) != 0:
+                lyrics = str("".join(lyrics)).replace("\n[", "\n\n[")
 
             for img in soup.find_all("img"):
                 try:
                     if "1000x1000x1" in img.get("src"):
                         image = img.get("src")
 
-                except:  # TypeError
+                except:
                     pass
 
-        except (
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-        ) as exc:
-            raise RequestConnectionError(
-                f"Could not connect to {self.api_url}. Is it down?"
-            ) from exc
-
-        return image
-
-    def scrape_lyrics(self, link):
-        song_lyrics = []
-
-        try:
-            req = self.client.get(link, timeout=5, headers=self.headers)
-
-            for lyrics_data in BeautifulSoup(req.text, "html.parser").select(
-                "div[class*=Lyrics__Container]"
-            ):
-                data = lyrics_data.get_text("\n")
-                song_lyrics.append(f"{data}\n")
-
-            if len(song_lyrics) != 0:
-                return str("".join(song_lyrics)).replace("\n[", "\n\n[")
+            return (lyrics, image)
 
             raise ScrapeError(
-                f"Could not scrape lyrics. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
+                f"Could not scrape data. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
             )
 
-        except (
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-        ) as exc:
+        except requests.exceptions.ConnectionError as exc:
             raise RequestConnectionError(
                 f"Could not connect to {self.api_url}. Is it down?"
             ) from exc
+
+        except requests.exceptions.Timeout as exc:
+            raise TimeoutError("Could not scrape. Request to scrape API timed out.") from exc
 
     def search(self, query_term):
         data = {"q": query_term}
@@ -147,7 +143,6 @@ class GeniusAPI:
 genius_api = GeniusAPI(
     api_url="https://api.genius.com/search/",
     token=os.environ["GENIUS_API_TOKEN"],
-    user_agent=USER_AGENT,
 )
 
 
@@ -227,7 +222,7 @@ def get_lyrics():
             )
 
         try:
-            lyrics = genius_api.scrape_lyrics(data[2])
+            scrape_data = genius_api.scrape(data[2])
 
         except ScrapeError as scrape_exc:
             return (
@@ -241,8 +236,6 @@ def get_lyrics():
                 500,
             )
 
-        cover_image = genius_api.scrape_cover(data[2])
-
         return (
             jsonify(
                 {
@@ -250,8 +243,8 @@ def get_lyrics():
                     "artists": data[0],
                     "title": data[1],
                     "source": data[2],
-                    "lyrics": lyrics,
-                    "cover_image": cover_image,
+                    "lyrics": scrape_data[0],
+                    "cover_image": scrape_data[1],
                 }
             ),
             200,
