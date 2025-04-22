@@ -14,9 +14,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 load_dotenv()
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 client = httpx.Client(http2=True)
 
@@ -67,26 +65,33 @@ class GeniusAPI:
     def __init__(self, api_url, token):
         self.api_url = api_url
         self.token = token
-        
 
     def scrape(self, link):
         lyrics = []
 
         try:
-            req = requests.get(f"{API_SCRAPER_URL}?url={link}", timeout=15)            
+            req = requests.get(f"{API_SCRAPER_URL}?url={link}", timeout=15)
             req_data = req.json()
 
             soup = BeautifulSoup(req_data["html"], "html.parser")
-            
+
             for lyricheader in soup.select("div[class*=LyricsHeader__Container]"):
                 lyricheader.decompose()
-            
+
             for lyrics_data in soup.select("div[class*=Lyrics__Container]"):
                 data = lyrics_data.get_text("\n")
                 lyrics.append(f"{data}\n")
 
             if len(lyrics) != 0:
-                lyrics = str("".join(lyrics)).replace("\n[", "\n\n[")
+                lyrics = str("".join(lyrics))
+                lyrics = (
+                    lyrics.replace("\n[", "\n\n[")
+                    .replace("\n(\n", "(")
+                    .replace("\n)", ")")
+                    .replace("(\n", "(")
+                    .replace("& \n", "& ")
+                    .replace("\n]", "]")
+                )
 
             return lyrics
 
@@ -100,7 +105,9 @@ class GeniusAPI:
             ) from exc
 
         except requests.exceptions.Timeout as exc:
-            raise TimeoutError("Could not scrape. Request to scrape API timed out.") from exc
+            raise TimeoutError(
+                "Could not scrape. Request to scrape API timed out."
+            ) from exc
 
     def search(self, query_term):
         data = {"q": query_term}
@@ -123,7 +130,9 @@ class GeniusAPI:
             artists = result["response"]["hits"][0]["result"]["artist_names"]
             title = result["response"]["hits"][0]["result"]["title"]
             genius_url = result["response"]["hits"][0]["result"]["url"]
-            header_image_url = result["response"]["hits"][0]["result"]["header_image_url"]
+            header_image_url = result["response"]["hits"][0]["result"][
+                "header_image_url"
+            ]
 
             return (artists, title, genius_url, header_image_url)
 
@@ -142,7 +151,9 @@ def verify_signature(secret_token, signature_header, payload_body):
     if not signature_header:
         return False
 
-    hash_object = hmac.new(secret_token.encode('utf-8'), msg=payload_body, digestmod=hashlib.sha256)
+    hash_object = hmac.new(
+        secret_token.encode("utf-8"), msg=payload_body, digestmod=hashlib.sha256
+    )
     expected_signature = "sha256=" + hash_object.hexdigest()
 
     if hmac.compare_digest(expected_signature, signature_header):
