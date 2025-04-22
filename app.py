@@ -71,7 +71,6 @@ class GeniusAPI:
 
     def scrape(self, link):
         lyrics = []
-        image = None
 
         try:
             req = requests.get(f"{API_SCRAPER_URL}?url={link}", timeout=15)            
@@ -89,15 +88,7 @@ class GeniusAPI:
             if len(lyrics) != 0:
                 lyrics = str("".join(lyrics)).replace("\n[", "\n\n[")
 
-            for img in soup.find_all("img"):
-                try:
-                    if "1000x1000x1" in img.get("src"):
-                        image = img.get("src")
-
-                except:
-                    pass
-
-            return (lyrics, image)
+            return lyrics
 
             raise ScrapeError(
                 f"Could not scrape data. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
@@ -132,8 +123,9 @@ class GeniusAPI:
             artists = result["response"]["hits"][0]["result"]["artist_names"]
             title = result["response"]["hits"][0]["result"]["title"]
             genius_url = result["response"]["hits"][0]["result"]["url"]
+            header_image_url = result["response"]["hits"][0]["result"]["header_image_url"]
 
-            return (artists, title, genius_url)
+            return (artists, title, genius_url, header_image_url)
 
         raise NoResults(
             f"'{query_term}' did not give any results, Please try a different term."
@@ -222,7 +214,7 @@ def get_lyrics():
             )
 
         try:
-            scrape_data = genius_api.scrape(data[2])
+            scraped_lyrics = genius_api.scrape(data[2])
 
         except ScrapeError as scrape_exc:
             return (
@@ -243,8 +235,8 @@ def get_lyrics():
                     "artists": data[0],
                     "title": data[1],
                     "source": data[2],
-                    "lyrics": scrape_data[0],
-                    "cover_image": scrape_data[1],
+                    "lyrics": scraped_lyrics,
+                    "cover_image": data[3],
                 }
             ),
             200,
