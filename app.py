@@ -79,11 +79,18 @@ class GeniusAPI:
                 lyricheader.decompose()
 
             for lyrics_data in soup.select("div[class*=Lyrics__Container]"):
-                data = lyrics_data.get_text("\n")
-                lyrics.append(f"{data}\n")
+                for tag in lyrics_data.select("a, span"):
+                    tag.unwrap()
 
-            if len(lyrics) != 0:
-                lyrics = str("".join(lyrics))
+                for br in lyrics_data.find_all("br"):
+                    br.replace_with("\n")
+
+                text = lyrics_data.get_text()
+                text = text.replace("\\n", "\n").strip()
+                lyrics.append(text + "\n")
+
+            if lyrics:
+                lyrics = "".join(lyrics)
                 lyrics = (
                     lyrics.replace("\n[", "\n\n[")
                     .replace("\n(\n", "(")
