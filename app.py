@@ -22,6 +22,16 @@ APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
 API_SCRAPER_URL = os.environ.get("API_SCRAPER_URL")
 USER_AGENT = "Mozilla/5.0 (Linux; Android 15; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.7049.38 Mobile Safari/537.36"
 
+WEBSITE_MODE = os.getenv("WEBSITE_MODE")
+
+
+if WEBSITE_MODE == "debug":
+    print("[PYLYRICAL] DEBUG = True")
+    app.config["DEBUG"] = True
+
+    print("[PYLYRICAL] TEMPLATES_AUTO_RELOAD = True")
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 
 class ScrapeError(Exception):
     """
@@ -197,7 +207,7 @@ def autod():
 @app.route("/")
 def index():
     return render_template("index.html")
-
+    
 
 @app.route("/lyrics", methods=["GET"])
 def get_lyrics():

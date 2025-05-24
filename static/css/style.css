@@ -1,0 +1,158 @@
+:root {
+    --accent-color: #ffff64;
+    --body-background-color: #111111;
+    --body-secondary-color: #0A0A0A;
+    --primary-text-color: #EDEDED;
+    --secondary-text-color: #B6B6B6;
+    --border-outline-color: #454545;
+    --element-hover-background-color: #232323;
+    --button-background-color: #EDEDED;
+    --button-hover-color: #D4D4D4;
+    --button-text-color: #0A0A0A;
+}
+
+html {
+    overflow-x: hidden;
+    margin-right: calc(-1 * (100vw - 100%));
+}
+
+body {
+    font-family: sans-serif;
+    font-size: 18px;
+    color: var(--secondary-text-color);
+    background-color: var(--body-background-color);
+    margin: 1em auto;
+    max-width: 40em;
+    line-height: 1.62;
+    padding: 0 0.92em 3.64em;
+    overflow-wrap: break-word;
+}
+
+hr {
+    border: 1px var(--border-outline-color) solid;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-text-color);
+    line-height: 1.2;
+    margin-bottom: 0.4em;
+    margin-top: 0.4em;
+}
+
+code,
+.code-block {
+    background-color: var(--body-secondary-color);
+    border: 1px var(--border-outline-color) solid;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    word-break: break-word;
+    white-space: pre-wrap;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+code {
+    padding: 0 10px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.code-block {
+    padding: 12px 18px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+code:hover {
+    background-color: var(--element-hover-background-color);
+}
+
+a {
+    color: var(--primary-text-color);
+    transition: color 0.3s ease;
+    word-break: break-word; /* possibly a bad choice? */
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+li::marker {
+    color: var(--primary-text-color);
+}
+
+button {
+    font-size: 18px;
+    padding: 12px;
+    border: 1px solid var(--border-outline-color);
+    border-radius: 8px;
+    background: var(--button-background-color);
+    color: var(--button-text-color);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.96);
+    background: var(--button-hover-color);
+}
+
+.input-wrapper {
+    border: 1px solid var(--border-outline-color);
+    border-radius: 12px;
+    padding: 20px;
+    padding-top: 14px;
+    background-color: var(--body-secondary-color);
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    box-sizing: border-box;
+    gap: 0.2em;
+}
+
+.input-wrapper label {
+    color: var(--secondary-text-color);
+    font-size: 1em;
+}
+
+.input-wrapper input {
+    border: 1px solid var(--border-outline-color);
+    border-radius: 8px;
+    background: var(--body-secondary-color);
+    color: var(--primary-text-color);
+    padding: 0.6em 0.8em;
+    outline: none;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.input-wrapper input:focus {
+    background-color: var(--element-hover-background-color);
+}
+
+.input-wrapper button {
+    margin-top: 20px;
+}
+
+.colored::first-letter {
+    color: var(--accent-color);
+}
+
+.current-endpoint {
+    color: #45A557;
+}
+
+.primary-text-color {
+    color: var(--primary-text-color);
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
+
+.navigation p {
+    margin: 0;
+}
