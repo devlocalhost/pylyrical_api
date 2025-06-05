@@ -1,26 +1,30 @@
 import os
 import hmac
 import hashlib
-import requests
 import subprocess
 
-import httpx
+import requests
 
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request, render_template
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+import scraper
+from exceptions import (
+    ScrapeError,
+    RequestConnectionError,
+    NoResults,
+    RequestTimeoutError,
+)
+
 load_dotenv()
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
-client = httpx.Client(http2=True)
-
 APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
 API_SCRAPER_URL = os.environ.get("API_SCRAPER_URL")
-USER_AGENT = "Mozilla/5.0 (Linux; Android 15; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.7049.38 Mobile Safari/537.36"
 
 WEBSITE_MODE = os.getenv("WEBSITE_MODE")
 
@@ -31,40 +35,6 @@ if WEBSITE_MODE == "debug":
 
     print("[PYLYRICAL] TEMPLATES_AUTO_RELOAD = True")
     app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-
-class ScrapeError(Exception):
-    """
-    custom exception to raise when scrapping
-    """
-
-    pass
-
-
-class TimeoutError(Exception):
-    """
-    error to raise when timeout
-    """
-
-    pass
-
-
-class RequestConnectionError(Exception):
-    """
-    custom exception to raise when api cannot
-    send a request/contact genius.com
-    """
-
-    pass
-
-
-class NoResults(Exception):
-    """
-    custom exception to raise when no results
-    for q (query)
-    """
-
-    pass
 
 
 class GeniusAPI:
@@ -80,10 +50,9 @@ class GeniusAPI:
         lyrics = []
 
         try:
-            req = requests.get(f"{API_SCRAPER_URL}?url={link}", timeout=15)
-            req_data = req.json()
+            html_data = scraper_h.scrape(link)
 
-            soup = BeautifulSoup(req_data["html"], "html.parser")
+            soup = BeautifulSoup(html_data, "html.parser")
 
             for lyricheader in soup.select("div[class*=LyricsHeader__Container]"):
                 lyricheader.decompose()
@@ -112,18 +81,18 @@ class GeniusAPI:
 
             return lyrics
 
-            raise ScrapeError(
-                f"Could not scrape data. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
-            )
+            # raise ScrapeError(
+            #     f"Could not scrape data. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
+            # )
 
         except requests.exceptions.ConnectionError as exc:
             raise RequestConnectionError(
-                f"Could not connect to {self.api_url}. Is it down?"
+                "Could not connect to scraper backend. Try again later?"
             ) from exc
 
         except requests.exceptions.Timeout as exc:
-            raise TimeoutError(
-                "Could not scrape. Request to scrape API timed out."
+            raise RequestTimeoutError(
+                "Could not scrape. Request timed out. Try again?"
             ) from exc
 
     def search(self, query_term):
@@ -161,6 +130,9 @@ class GeniusAPI:
 genius_api = GeniusAPI(
     api_url="https://api.genius.com/search/",
     token=os.environ["GENIUS_API_TOKEN"],
+)
+scraper_h = scraper.Scraper(
+    account_id=os.environ["ACCOUNT_ID"], api_token=os.environ["API_TOKEN"]
 )
 
 
@@ -207,7 +179,7 @@ def autod():
 @app.route("/")
 def index():
     return render_template("index.html")
-    
+
 
 @app.route("/lyrics", methods=["GET"])
 def get_lyrics():
