@@ -71,8 +71,7 @@ class GeniusAPI:
             if lyrics:
                 lyrics = "".join(lyrics)
                 lyrics = (
-                    lyrics.replace("\n[", "\n\n[")
-                    .replace("\n(\n", "(")
+                    lyrics.replace("\n(\n", "(")
                     .replace("\n)", ")")
                     .replace("(\n", "(")
                     .replace("& \n", "& ")
