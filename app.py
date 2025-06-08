@@ -147,8 +147,7 @@ def verify_signature(secret_token, signature_header, payload_body):
     if hmac.compare_digest(expected_signature, signature_header):
         return True
 
-    else:
-        return False
+    return False
 
 
 @app.after_request
@@ -171,8 +170,7 @@ def autod():
 
         return "", 200
 
-    else:
-        return "", 403
+    return "", 403
 
 
 @app.route("/")
