@@ -10,6 +10,7 @@ from flask import Flask, jsonify, request, render_template
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+import status
 import scraper
 from exceptions import (
     ScrapeError,
@@ -158,6 +159,11 @@ def add_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
 
     return response
+
+
+@app.route("/sj")
+def status_json():
+    return status.get_status("pylyrical_api")
 
 
 @app.route("/autod", methods=["POST"])
