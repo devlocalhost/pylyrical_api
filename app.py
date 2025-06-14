@@ -19,7 +19,6 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 APP_SECRET_TOKEN = os.environ.get("APP_SECRET_TOKEN")
 API_SCRAPER_URL = os.environ.get("API_SCRAPER_URL")
-USER_AGENT = "Mozilla/5.0 (Linux; Android 15; SM-G960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.7049.38 Mobile Safari/537.36"
 
 WEBSITE_MODE = os.getenv("WEBSITE_MODE")
 
@@ -101,9 +100,9 @@ class GeniusAPI:
 
             return lyrics
 
-            raise ScrapeError(
-                f"Could not scrape data. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
-            )
+            # raise ScrapeError(
+            #     f"Could not scrape data. Did the HTML change? Please open an issue at https://github.com/devlocalhost/pylyrical_api and paste this: URL: {link}. Data text: ```{req.text}```"
+            # )
 
         except requests.exceptions.ConnectionError as exc:
             raise RequestConnectionError(
