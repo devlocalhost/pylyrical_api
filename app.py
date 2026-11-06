@@ -262,3 +262,8 @@ def get_lyrics():
         )
 
     return jsonify({"status": 400, "message": "Missing parameter 'q'."}), 400
+
+
+@app.route("/robots.txt")
+def robots():
+    return "User-agent: *\nDisallow: /\n", 200, {"Content-Type": "text/plain"}
